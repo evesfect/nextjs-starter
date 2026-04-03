@@ -2,8 +2,12 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-// In production, this MUST be a strong, random string in your .env file
-const secretKey = process.env.JWT_SECRET || "super-secret-development-key";
+// Fail securely: Crash the app if the environment is misconfigured
+if (!process.env.JWT_SECRET) {
+  throw new Error("CRITICAL SECURITY ERROR: JWT_SECRET environment variable is missing.");
+}
+
+const secretKey = process.env.JWT_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function createSession(userId: number) {
